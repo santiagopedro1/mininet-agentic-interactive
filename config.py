@@ -1,0 +1,8 @@
+OLLAMA_BASE_URL = "http://10.10.10.152:11434"
+# OLLAMA_BASE_URL = "http://localhost:11434"
+
+COORDINATOR_MODEL = "qwen3.5:9b"
+WORKER_MODEL = "qwen3.5:2b"
+
+COORDINATOR_MODEL = "phi3.5:latest"
+WORKER_MODEL = "phi3.5:latest"
