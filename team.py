@@ -3,6 +3,7 @@ from agno.models.ollama import Ollama
 
 from config import OLLAMA_BASE_URL, COORDINATOR_MODEL, WORKER_MODEL
 from topology import TOPOLOGY, topology_to_text
+
 from agents.switch import make_switch_agent
 from agents.network_ops import make_network_agent
 
@@ -45,7 +46,7 @@ def build_models():
     worker = Ollama(
         id=WORKER_MODEL,
         host=OLLAMA_BASE_URL,
-        keep_alive="2m"
+        keep_alive="5m"
     )
 
     return coordinator, worker
@@ -69,7 +70,6 @@ def build_team():
 
     switch_agents = build_switch_agents(worker_model, switch_names)
 
-
     network_agent = make_network_agent(worker_model)
 
     team = Team(
@@ -80,7 +80,7 @@ def build_team():
         tools=[routing_tool],
         debug_mode=True,
         instructions=f"""
-        You are managing a network.
+        You are managing a network. When presenting the output from tools use markdown with natural language explanations.
 
         Topology:
         {topology_to_text(TOPOLOGY)}

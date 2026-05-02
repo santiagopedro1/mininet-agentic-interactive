@@ -6,7 +6,7 @@ def make_switch_agent(name, neighbors, model):
     return Agent(
         name=f"Switch-{name}",
         model=model,
-        debug_mode=True,
+        use_json_mode=True,
         tools=[switch_stats_tool],
         instructions=f"""
         You are switch {name}.

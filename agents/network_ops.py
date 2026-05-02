@@ -5,8 +5,8 @@ def make_network_agent(model):
     return Agent(
         name="NetworkOps",
         model=model,
+        use_json_mode=True,
         tools=[ping_tool],
-        debug_mode=True,
         instructions="""
 You perform network operations using available tools.
 

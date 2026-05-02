@@ -21,13 +21,13 @@ class SimpleTopo(Topo):
         s3 = self.addSwitch("s3")
 
         # low-latency path
-        self.addLink(h1, s1, delay="1ms")
-        self.addLink(s1, s2, delay="1ms")
-        self.addLink(s2, h2, delay="1ms")
+        self.addLink(h1, s1, delay="1ms", loss=10)
+        self.addLink(s1, s2, delay="1ms", loss=10)
+        self.addLink(s2, h2, delay="1ms", loss=10)
 
         # high-latency alternative path
-        self.addLink(s1, s3, delay="10ms")
-        self.addLink(s3, h2, delay="10ms")
+        self.addLink(s1, s3, delay="10ms", loss=10)
+        self.addLink(s3, h2, delay="10ms", loss=10)
 
 
 def start_mininet():
