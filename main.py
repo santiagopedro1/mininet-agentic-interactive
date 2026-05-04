@@ -11,6 +11,9 @@ from team import build_team
 
 from tools.context import set_mininet
 
+from rich.console import Console
+from rich.markdown import Markdown
+
 class SimpleTopo(Topo):
     def build(self):
         h1 = self.addHost("h1")
@@ -21,9 +24,9 @@ class SimpleTopo(Topo):
         s3 = self.addSwitch("s3")
 
         # low-latency path
-        self.addLink(h1, s1, delay="1ms", loss=10)
-        self.addLink(s1, s2, delay="1ms", loss=10)
-        self.addLink(s2, h2, delay="1ms", loss=10)
+        self.addLink(h1, s1, delay="1ms", loss=10, bw=5)
+        self.addLink(s1, s2, delay="1ms", loss=10, bw=10)
+        self.addLink(s2, h2, delay="1ms", loss=10, bw=15)
 
         # high-latency alternative path
         self.addLink(s1, s3, delay="10ms", loss=10)
@@ -37,33 +40,8 @@ def start_mininet():
     return net
 
 
-def print_disclaimer():
-    print("=" * 60)
-    print("Mininet LLM Control Interface")
-    print("=" * 60)
-    print("""
-This tool allows you to interact with a simulated network using natural language.
-
-Capabilities:
-- Compute paths between hosts (uses deterministic routing)
-- Test connectivity using ping (real Mininet execution)
-- Query basic network structure
-
-Limitations:
-- No persistent state or learning
-- Limited understanding of complex policies
-- May require clear, explicit queries
-
-Examples:
-- "Find path from h1 to h2"
-- "Ping from h1 to h2"
-
-Type 'exit' or 'quit' to stop.
-""")
-    print("=" * 60)
-
-
 def interactive_loop(team):
+    console = Console()
     while True:
         try:
             user_input = input("\n> ").strip()
@@ -75,7 +53,7 @@ def interactive_loop(team):
                 continue
 
             result = team.run(user_input)
-            # print(result.content)
+            console.print(Markdown(result.content))
 
         except KeyboardInterrupt:
             print("\nInterrupted. Type 'exit' to quit.")
@@ -90,7 +68,6 @@ if __name__ == "__main__":
 
     team = build_team()
 
-    print_disclaimer()
     interactive_loop(team)
 
     print("\nShutting down Mininet...")

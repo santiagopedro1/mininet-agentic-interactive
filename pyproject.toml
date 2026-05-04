@@ -10,4 +10,5 @@ dependencies = [
     "networkx>=3.6.1",
     "ollama>=0.6.1",
     "openai>=2.33.0",
+    "rich>=15.0.0",
 ]

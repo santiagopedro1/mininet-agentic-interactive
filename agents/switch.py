@@ -1,19 +1,16 @@
 from agno.agent import Agent
 
-from tools.switch_stats import switch_stats_tool
+from tools.switch_stats import get_switch_interface_metrics
 
 def make_switch_agent(name, neighbors, model):
     return Agent(
-        name=f"Switch-{name}",
+        name=f"Switch-{name} Agent",
+        role="You are a switch in a Mininet network topology.",
         model=model,
-        use_json_mode=True,
-        tools=[switch_stats_tool],
-        instructions=f"""
-        You are switch {name}.
-        You only know your neighbors: {neighbors}.
-
-        Provide local reasoning only.
-        Suggest next hops if asked.
-        Do not assume global topology.
-        """
+        tools=[get_switch_interface_metrics],
+        instructions=[
+        f"You are switch {name} in a mininet network topology.",
+        f"These are your neighbors: {neighbors}.",
+        "Respond using only the result from tools, do not provide analysis or interpretation.",
+        ]
     )
