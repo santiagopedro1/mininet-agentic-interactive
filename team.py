@@ -9,7 +9,7 @@ from agno.models.ollama import Ollama
 from config import OLLAMA_BASE_URL, COORDINATOR_MODEL, WORKER_MODEL
 
 from agents.switch import make_switch_agent
-from agents.net_diag import make_network_agent
+from agents.net_diag import make_network_diagnostics_agent
 
 from tools.context import get_mininet
 
@@ -127,7 +127,7 @@ def build_team():
 
     switch_agents = build_switch_agents(worker_model, switch_names)
 
-    network_agent = make_network_agent(worker_model)
+    network_agent = make_network_diagnostics_agent(worker_model)
 
     team = Team(
         name="Mininet Team",

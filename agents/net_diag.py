@@ -1,7 +1,7 @@
 from agno.agent import Agent
 from tools.ping import ping_tool
 
-def make_network_agent(model):
+def make_network_diagnostics_agent(model):
     return Agent(
         name="Network Diagnostics Agent",
         role="Run pings and set up iperf tests on the Mininet network",
