@@ -10,18 +10,20 @@ from config import OLLAMA_BASE_URL, COORDINATOR_MODEL, WORKER_MODEL
 
 from agents.switch import make_switch_agent
 from agents.net_diag import make_network_diagnostics_agent
+from agents.net_manager import make_network_manager_agent
 
-from tools.context import get_mininet
+from tools.context import get_mininet, set_team, set_worker_model
+from tools.net_management import list_topology_tool
 
 def get_switch_neighbors(switch_name: str):
     net = get_mininet()
     if net is None:
-        raise RuntimeError("Mininet not initialized")
+        return []
 
     try:
         sw = net.get(switch_name)
     except Exception:
-        raise ValueError(f"Switch {switch_name} not found")
+        return []
 
     neighbors = []
 
@@ -54,6 +56,8 @@ def build_models():
     return coordinator, worker
 
 def get_switch_names(net):
+    if not net:
+        return []
     return [sw.name for sw in net.switches]
 
 def build_switch_agents(worker_model, switch_names):
@@ -122,19 +126,23 @@ def on_run_completed(run_output=None, **_):
 
 def build_team():
     coordinator_model, worker_model = build_models()
+    set_worker_model(worker_model)
 
-    switch_names = ["s1", "s2", "s3"]
+    net = get_mininet()
+    switch_names = get_switch_names(net)
 
     switch_agents = build_switch_agents(worker_model, switch_names)
 
     network_agent = make_network_diagnostics_agent(worker_model)
+    network_manager_agent = make_network_manager_agent(worker_model)
 
     team = Team(
         name="Mininet Team",
         model=coordinator_model,
         mode=TeamMode.coordinate,
-        members=[network_agent, *switch_agents],
-        # debug_mode=True,
+        members=[network_agent, network_manager_agent, *switch_agents],
+        debug_mode=True,
+        tools=[list_topology_tool],
         tool_hooks=[logger_hook],
         post_hooks=[on_run_completed],
         markdown=True,
@@ -145,7 +153,10 @@ def build_team():
             "If the user did not ask for specific information, provide all avaiable information that you have access to which is relevant to the user's query.",
             "network_agent is responsible for executing network operations and gathering telemetry across the topology.",
             "switch_agents are responsible for monitoring their respective switches and providing telemetry data.",
+            "network_manager_agent is responsible for topology changes (adding/removing nodes and links).",
+            "use list_topology_tool to confirm the names of switches and hosts in the topology when needed.",
         ]
     )
 
+    set_team(team)
     return team
