@@ -1,5 +1,5 @@
 from agno.tools import tool
-from tools.context import get_shadow_topology, get_mininet, set_mininet, get_team, get_worker_model
+from context import get_shadow_topology, get_mininet, set_mininet, get_team, get_worker_model
 from agents.switch import make_switch_agent
 
 from mininet.net import Mininet

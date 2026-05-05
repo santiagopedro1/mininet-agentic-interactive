@@ -8,7 +8,7 @@ from mininet.log import setLogLevel
 
 from team import build_team
 
-from tools.context import set_mininet
+from context import set_mininet
 
 from rich.console import Console
 from rich.markdown import Markdown

@@ -1,6 +1,6 @@
 from agno.tools import tool
 
-from tools.context import get_mininet
+from context import get_mininet
 
 @tool
 def ping_tool(src: str, dst: str, count: int = 5) -> str:

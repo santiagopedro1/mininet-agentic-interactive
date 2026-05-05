@@ -12,7 +12,7 @@ from agents.switch import make_switch_agent
 from agents.net_diag import make_network_diagnostics_agent
 from agents.net_manager import make_network_manager_agent
 
-from tools.context import get_mininet, set_team, set_worker_model
+from context import get_mininet, set_team, set_worker_model
 from tools.net_management import list_topology_tool
 
 def get_switch_neighbors(switch_name: str):
