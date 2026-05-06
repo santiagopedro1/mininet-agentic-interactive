@@ -3,7 +3,6 @@ from context import get_shadow_topology, get_mininet, set_mininet, get_team, get
 from agents.switch import make_switch_agent
 
 from mininet.net import Mininet
-from mininet.node import Controller
 from mininet.link import TCLink
 from mininet.clean import cleanup
 
@@ -34,19 +33,23 @@ def deploy_topology_tool() -> str:
     cleanup()
 
     # 2. Build fresh Mininet instance
-    net = Mininet(controller=Controller, link=TCLink)
+    net = Mininet(controller=None, link=TCLink)
     set_mininet(net) # Update the global context
     
     # 3. Apply Hosts
     for h_name, h_conf in topo["hosts"].items():
+        host = None
         if h_conf.get("ip"):
-            net.addHost(h_name, ip=h_conf["ip"])
+            host = net.addHost(h_name, ip=h_conf["ip"])
         else:
-            net.addHost(h_name)
+            host = net.addHost(h_name)
+
+        host.cmd(f'sysctl -w net.ipv6.conf.all.disable_ipv6=1')
             
     # 4. Apply Switches
     for s_name in topo["switches"].keys():
-        net.addSwitch(s_name, failMode='standalone')
+        switch = net.addSwitch(s_name, failMode='secure', stp=False, inband=False)
+        switch.cmd(f'ovs-ofctl del-flows {s_name}')
         
     # 5. Apply Links with Configs
     for link in topo["links"]:
