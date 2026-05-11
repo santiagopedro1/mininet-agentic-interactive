@@ -1,5 +1,5 @@
 from agno.tools import tool
-from context import get_shadow_topology, get_mininet, set_mininet, get_team, get_worker_model
+from utils.context import get_shadow_topology, get_mininet, set_mininet, get_team, get_worker_model
 from agents.switch import make_switch_agent
 
 from mininet.net import Mininet
@@ -7,6 +7,9 @@ from mininet.link import TCLink
 from mininet.clean import cleanup
 
 from typing import Optional
+
+from utils.flows import remove_flow_rules
+from utils.neighbors import get_switch_neighbors
 
 @tool
 def list_topology_tool() -> dict:
@@ -25,50 +28,43 @@ def deploy_topology_tool() -> str:
     team = get_team()
     model = get_worker_model()
     
-    # 1. Teardown existing network
+    # 1. Para e limpa a rede antiga, se existir
     if old_net:
         old_net.stop()
-        
-    # Crucial: Scrub the Linux kernel of old veth pairs and OVS configurations
     cleanup()
 
-    # 2. Build fresh Mininet instance
+    # 2. Cria a nova rede baseada no topo atualizado
     net = Mininet(controller=None, link=TCLink)
-    set_mininet(net) # Update the global context
+    set_mininet(net)
     
-    # 3. Apply Hosts
+    # 3. Aplicar Hosts
     for h_name, h_conf in topo["hosts"].items():
-        host = None
         if h_conf.get("ip"):
-            host = net.addHost(h_name, ip=h_conf["ip"])
+            net.addHost(h_name, ip=h_conf["ip"])
         else:
-            host = net.addHost(h_name)
-
-        host.cmd(f'sysctl -w net.ipv6.conf.all.disable_ipv6=1')
+            net.addHost(h_name)
             
-    # 4. Apply Switches
+    # 4. Aplicar Switches
     for s_name in topo["switches"].keys():
-        switch = net.addSwitch(s_name, failMode='secure', stp=False, inband=False)
-        switch.cmd(f'ovs-ofctl del-flows {s_name}')
+        net.addSwitch(s_name, failMode='standalone', stp=False, inband=False)
+        remove_flow_rules(net, s_name)
         
-    # 5. Apply Links with Configs
+    # 5. Aplicar Links
     for link in topo["links"]:
         n1 = net.get(link["node1"])
         n2 = net.get(link["node2"])
         net.addLink(n1, n2, **link["params"])
         
-    # 6. Start the network
+    # 6. Inicia a rede
     net.start()
     
-    # 7. Rebuild the Agent Team
+    # 7. Refaz o time de agentes
     if team and model:
-        # Filter out all existing switch agents based on an identifier 
-        # (Assuming your switch agents have 'Switch' in their name)
+        # Deixa somente os agentes não relacionados a switches
         team.members = [m for m in team.members if "Switch" not in m.name]
-        
-        # Spawn fresh agents for the new topology
         for s_name in topo["switches"].keys():
-            agent = make_switch_agent(name=s_name, neighbors=[], model=model)
+            # Faz e adiciona um agente de switch para cada switch do topo
+            agent = make_switch_agent(name=s_name, neighbors=get_switch_neighbors(s_name), model=model)
             team.members.append(agent)
             
     return "Topology successfully deployed! Network restarted and fresh switch agents initialized."
@@ -96,7 +92,7 @@ def add_switch_tool(name: str) -> str:
     return f"Switch {name} added to shadow topology. Run the deploy tool to apply changes."
 
 @tool
-def add_link_tool(node1: str, node2: str, bw: Optional[int] = None, delay: Optional[str] = None, loss: Optional[int] = None) -> str:
+def add_link_tool(node1: str, node2: str, bw: Optional[float] = None, delay: Optional[str] = None, loss: Optional[int] = None) -> str:
     """Draft a link with configuration parameters."""
     topo = get_shadow_topology()
     

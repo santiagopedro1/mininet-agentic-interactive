@@ -1,30 +1,19 @@
 import readline
 
-from mininet.net import Mininet
-from mininet.node import Controller
-from mininet.link import TCLink
-
 from mininet.log import setLogLevel
 
-from team import build_team
+from agents.team import build_team
 
-from context import set_mininet
+from utils.context import get_mininet
 
 from rich.console import Console
 from rich.markdown import Markdown
-
-def start_mininet():
-    # Start with an empty network
-    net = Mininet(controller=Controller, link=TCLink)
-    net.start()
-    return net
-
 
 def interactive_loop(team):
     console = Console()
     while True:
         try:
-            user_input = input("\n> ").strip()
+            user_input = input("\nMininet-AI> ").strip()
 
             if user_input.lower() in {"exit", "quit"}:
                 break
@@ -43,12 +32,22 @@ def interactive_loop(team):
 
 if __name__ == "__main__":
     setLogLevel('info')   # options: debug, info, warning, error
-    net = start_mininet()
-    set_mininet(net)
 
     team = build_team()
 
+    logo = """
+  __  __ _       _            _                _    ___ 
+ |  \\/  (_)_ __ (_)_ __   ___| |_             / \\  |_ _|
+ | |\\/| | | '_ \\| | '_ \\ / _ \\ __|  _____    / _ \\  | | 
+ | |  | | | | | | | | | |  __/ |_  |_____|  / ___ \\ | | 
+ |_|  |_|_|_| |_|_|_| |_|\\___|\\__|         /_/   \\_\\___|                                           
+"""
+
+    print(logo)
+
     interactive_loop(team)
 
-    print("\nShutting down Mininet...")
-    net.stop()
+    net = get_mininet()
+    if net:
+        print("\nShutting down Mininet...")
+        net.stop()
