@@ -4,13 +4,13 @@ from agno.models.ollama import Ollama
 from config import OLLAMA_BASE_URL, COORDINATOR_MODEL, WORKER_MODEL
 
 from agents.switch import make_switch_agent
-from agents.net_diag import make_network_diagnostics_agent
-from agents.net_manager import make_network_manager_agent
+from agents.traffic_generator import make_traffic_generator_agent
+from agents.topology_architect import make_topology_architect_agent
 
 from utils.context import get_mininet, set_team, set_worker_model
 from utils.neighbors import get_switch_neighbors
 from utils.hooks import run_metrics, tool_metrics
-from tools.net_management import list_topology_tool
+from tools.net_management import list_topology
 
 def build_models():
     coordinator = Ollama(
@@ -48,15 +48,15 @@ def build_team():
 
     switch_agents = build_switch_agents(worker_model, switch_names)
 
-    network_agent = make_network_diagnostics_agent(worker_model)
-    network_manager_agent = make_network_manager_agent(worker_model)
+    traffic_generator_agent = make_traffic_generator_agent(worker_model)
+    topology_architect_agent = make_topology_architect_agent(worker_model)
 
     team = Team(
         name="Mininet Team",
         model=coordinator_model,
         mode=TeamMode.coordinate,
-        members=[network_agent, network_manager_agent, *switch_agents],
-        tools=[list_topology_tool],
+        members=[traffic_generator_agent, topology_architect_agent, *switch_agents],
+        tools=[list_topology],
         tool_hooks=[tool_metrics],
         post_hooks=[run_metrics],
         markdown=True,

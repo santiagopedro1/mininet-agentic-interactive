@@ -4,7 +4,7 @@ from utils.context import get_mininet
 from utils.flows import install_bidirectional_path, remove_flow_rules
 
 @tool
-def ping_tool(path: list[str], count: int = 5) -> str:
+def ping(path: list[str], count: int = 5) -> str:
     """
     Run ping between two hosts in Mininet.
 
@@ -24,7 +24,7 @@ def ping_tool(path: list[str], count: int = 5) -> str:
     h2 = net.get(dst)
 
     if h1 is None or h2 is None:
-        return f"One or both hosts not found: {src}, {dst}. Double check the topology with list_topology_tool."
+        return f"One or both hosts not found: {src}, {dst}. Double check the topology with list_topology."
 
     install_bidirectional_path(net, path)
 

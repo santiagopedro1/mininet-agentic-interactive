@@ -3,7 +3,7 @@ from agno.tools import tool
 from utils.context import get_mininet
 
 @tool
-def install_flow_tool(sw_name: str, next_name: str, dst: str) -> str:
+def install_flow(sw_name: str, next_name: str, dst: str) -> str:
     """Install forwarding flows on a Mininet switch.
 
     This tool retrieves the current Mininet network, finds the switch and
@@ -42,7 +42,7 @@ def install_flow_tool(sw_name: str, next_name: str, dst: str) -> str:
     return "Flows installed successfully"
 
 @tool
-def remove_flows_tool(sw_name: str) -> str:
+def remove_flows(sw_name: str) -> str:
     """Remove all flows from a Mininet switch.
 
     This tool retrieves the current Mininet network, finds the specified switch,

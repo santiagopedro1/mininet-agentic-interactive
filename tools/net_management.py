@@ -12,13 +12,13 @@ from utils.flows import remove_flow_rules
 from utils.neighbors import get_switch_neighbors
 
 @tool
-def list_topology_tool() -> dict:
+def list_topology() -> dict:
     """Returns the current shadow topology as JSON."""
     topo = get_shadow_topology()
     return topo
 
 @tool
-def deploy_topology_tool() -> str:
+def deploy_topology() -> str:
     """
     Applies the shadow topology to the real network. 
     This restarts Mininet and recreates all switch agents.
@@ -70,7 +70,7 @@ def deploy_topology_tool() -> str:
     return "Topology successfully deployed! Network restarted and fresh switch agents initialized."
 
 @tool
-def add_host_tool(name: str, ip: Optional[str] = None) -> str:
+def add_host(name: str, ip: Optional[str] = None) -> str:
     """Draft a host to be added to the network."""
     topo = get_shadow_topology()
     
@@ -81,7 +81,7 @@ def add_host_tool(name: str, ip: Optional[str] = None) -> str:
     return f"Host {name} added to shadow topology. Run the deploy tool to apply changes."
 
 @tool
-def add_switch_tool(name: str) -> str:
+def add_switch(name: str) -> str:
     """Draft a switch to be added to the network."""
     topo = get_shadow_topology()
     
@@ -92,7 +92,7 @@ def add_switch_tool(name: str) -> str:
     return f"Switch {name} added to shadow topology. Run the deploy tool to apply changes."
 
 @tool
-def add_link_tool(node1: str, node2: str, bw: Optional[float] = None, delay: Optional[str] = None, loss: Optional[int] = None) -> str:
+def add_link(node1: str, node2: str, bw: Optional[float] = None, delay: Optional[str] = None, loss: Optional[int] = None) -> str:
     """Draft a link with configuration parameters."""
     topo = get_shadow_topology()
     
@@ -121,7 +121,7 @@ def add_link_tool(node1: str, node2: str, bw: Optional[float] = None, delay: Opt
     return f"Link {node1}-{node2} drafted with params: {params}. Run deploy tool to apply."
 
 @tool
-def remove_node_tool(name: str) -> str:
+def remove_node(name: str) -> str:
     """Remove a node from the shadow topology."""
     topo = get_shadow_topology()
     
@@ -138,7 +138,7 @@ def remove_node_tool(name: str) -> str:
     return f"Node {name} removed from shadow topology. Run deploy to apply."
 
 @tool
-def remove_link_tool(node1: str, node2: str) -> str:
+def remove_link(node1: str, node2: str) -> str:
     """Draft the removal of a link between two nodes in the shadow topology."""
     topo = get_shadow_topology()
     

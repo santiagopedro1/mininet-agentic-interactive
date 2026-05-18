@@ -1,15 +1,15 @@
 from agno.agent import Agent
-from tools.ping import ping_tool
+from tools.ping import ping
 from tools.iperf import run_iperf_test
 from utils.hooks import tool_metrics
 
-def make_network_diagnostics_agent(model):
+def make_traffic_generator_agent(model):
     return Agent(
-        name="Network Diagnostics Agent",
-        role="Run pings and set up iperf tests on the Mininet network",
+        name="Traffic Generator",
+        role="Generates traffic and runs connectivity tests.",
         model=model,
         tool_call_limit=1,
-        tools=[ping_tool, run_iperf_test],
+        tools=[ping, run_iperf_test],
         tool_hooks=[tool_metrics],
         instructions=[
             "You run network diagnostics on a Mininet topology using the provided custom tools.",
