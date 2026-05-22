@@ -32,6 +32,7 @@ The system uses the Agno framework to build a multi-agent team:
 ## Installation
 
 1. **Clone the repository**:
+
    ```bash
    git clone <repository-url>
    cd mininet-agentic-interactive
@@ -39,6 +40,7 @@ The system uses the Agno framework to build a multi-agent team:
 
 2. **Install dependencies**:
    It is recommended to use `uv` or a virtual environment:
+
    ```bash
    uv sync
    ```
@@ -70,16 +72,8 @@ sudo uv run main.py
 
 ### Example Commands
 
-- `Find path from h1 to h2`
+- `Set up a network topology with 2 hosts and 3 switches.`
 - `Ping from h1 to h2`
 - `What are the stats for switch s1?`
 - `How can I go from s1 to h2?`
-
-## Topology
-
-The default topology (`SimpleTopo`) consists of:
-- **Hosts**: `h1`, `h2`
-- **Switches**: `s1`, `s2`, `s3`
-- **Paths**:
-  - `h1 -- s1 -- s2 -- h2` (Low latency)
-  - `h1 -- s1 -- s3 -- h2` (High latency)
+- `Show me the current network topology.`
