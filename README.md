@@ -114,3 +114,9 @@ def setup_topo():
 if __name__ == "__main__":
     setup_topo()
 ```
+
+## Roadmap
+
+- **Import and share topologies**: Let users describe a complete Mininet network, including hosts, switches, and links, in a portable file format such as YAML, then load it with a single command.
+- **Evolve into a true framework**: Make it easier for users to integrate custom agents and agent teams with Mininet-AI through clear extension points, reusable components, and straightforward configuration.
+- **Integrate skills**: Add support for reusable skills that extend agents with specialized Mininet workflows and domain capabilities.
