@@ -77,3 +77,40 @@ sudo uv run main.py
 - `What are the stats for switch s1?`
 - `How can I go from s1 to h2?`
 - `Show me the current network topology.`
+
+## Creating a Custom Topology
+
+You can define and provision custom network topologies programmatically using the `tools.net_management` module.
+
+### Example
+
+The following script sets up a diamond switch topology connecting two end hosts (`h1` and `h2`):
+
+```python
+from tools.net_management import add_host, add_switch, add_link, deploy_topology
+
+def setup_topo():
+    # 1. Define hosts
+    add_host("h1")
+    add_host("h2")
+
+    # 2. Define switches
+    add_switch("s1")
+    add_switch("s2")
+    add_switch("s3")
+    add_switch("s4")
+
+    # 3. Define links
+    add_link("h1", "s1")
+    add_link("s1", "s2")
+    add_link("s1", "s3")
+    add_link("s2", "s4")
+    add_link("s3", "s4")
+    add_link("s4", "h2")
+
+    # 4. Build and deploy
+    deploy_topology()
+
+if __name__ == "__main__":
+    setup_topo()
+```
